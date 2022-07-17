@@ -1,0 +1,3 @@
+raspi-gpio set 4 dh
+raspi-gpio set 4 dl
+raspi-gpio set 4 dh
