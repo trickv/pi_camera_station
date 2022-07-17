@@ -30,23 +30,31 @@ port = serial.Serial("/dev/ttyS0", baudrate=115200, timeout=1)
 # Transmitting AT Commands to the Modem
 # '\r\n' indicates the Enter key
 
+def poweroff():
+    write('AT+CPOWD=1')
+    time.sleep(5)
+    print(port.read(1000))
+    sys.exit(1)
+
 def write(command):
     command = command + "\r\n"
     command = command.encode('latin1')
     port.write(command)
 
 def read_ok():
+    received = b''
     while True:
-        received = port.read(1000)
+        received += port.read(1000)
         if len(received) > 0:
-            break
-        else:
-            print("waiting...")
-    if received.decode('latin1').find("OK") < 0:
-        print(received)
-        sys.exit(1)
-    else:
-        print(received)
+            if received.decode('latin1').find("ERROR") >= 0:
+                print(received)
+                poweroff()
+
+            if received.decode('latin1').find("OK") >= 0:
+                print(received)
+                break
+        print(".", end="")
+        time.sleep(0.1)
 
 def write_ok(command):
     write(command)
@@ -99,7 +107,7 @@ write_ok('AT+HTTPACTION=0')
 write_ok('AT+HTTPREAD')
 # write_ok('AT+HTTPTERM') # seems to return an error even if we get a 200? weird
 # for now, just shut the module down now:
-write_ok('AT+CPOWD=1')
+poweroff()
 #write_ok('AT+SAPBR=0,1') # Close GPRS context
 
 # Now turn the modem off:
