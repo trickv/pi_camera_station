@@ -10,7 +10,7 @@ import datetime
 image_file="/dev/shm/image-{}".format(datetime.datetime.isoformat(datetime.datetime.now()))
 
 subprocess.run(["raspistill -t 2000 -o {}.png -e png".format(image_file)], shell=True, check=True)
-subprocess.run(["cwebp -q 80 {}.png -o {}.webp".format(image_file,image_file)], shell=True, check=True)
+subprocess.run(["cwebp -q 60 {}.png -o {}.webp".format(image_file,image_file)], shell=True, check=True)
 image = None
 with open("{}.webp".format(image_file), "rb") as in_file:
     image = in_file.read()
