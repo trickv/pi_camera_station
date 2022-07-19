@@ -10,8 +10,8 @@ power_cycle = True
 if power_cycle:
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(4, GPIO.OUT)
-    GPIO.output(4, GPIO.LOW) # Turn modem off
-    time.sleep(3) # wait a sec for it to turn off
+    #GPIO.output(4, GPIO.LOW) # Turn modem off
+    #time.sleep(3) # wait a sec for it to turn off
 
     # Now turn it on (pulse high, wait for it, then sustain high)
     GPIO.output(4, GPIO.HIGH)
@@ -34,6 +34,7 @@ def poweroff():
     write('AT+CPOWD=1')
     time.sleep(5)
     print(port.read(1000))
+    GPIO.output(4, GPIO.LOW) # Turn modem power switch off
     sys.exit(1)
 
 def write(command):
@@ -64,10 +65,10 @@ def write_ok(command):
 while True:
     write('AT')
     rcv = port.read(100)
-    print(rcv)
     if len(rcv) > 0:
+        print(rcv)
         break
-    print(".")
+    print(".", end='')
     time.sleep(1)
 
 # MEH: # reset the modem in case it was left in an unclean state
@@ -77,6 +78,8 @@ while True:
 
 print("Module online, giving 15 more seconds to connect:")
 time.sleep(15)
+rcv = port.read(100)
+print(rcv)
 
 # check status
 print("Network signal quality query, returns a signal value:")
