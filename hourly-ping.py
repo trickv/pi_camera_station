@@ -54,7 +54,7 @@ def read_ok():
             if received.decode('latin1').find("OK") >= 0:
                 print(received)
                 break
-        print(".", end="")
+        print(".", end="", flush=True)
         time.sleep(0.1)
 
 def write_ok(command):
@@ -68,7 +68,7 @@ while True:
     if len(rcv) > 0:
         print(rcv)
         break
-    print(".", end='')
+    print(".", end='', flush=True)
     time.sleep(1)
 
 # MEH: # reset the modem in case it was left in an unclean state
