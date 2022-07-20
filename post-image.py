@@ -13,10 +13,11 @@ modem.init()
 image_file="/dev/shm/image-{}".format(datetime.datetime.isoformat(datetime.datetime.now()))
 
 subprocess.run(["raspistill -t 2000 -o {}.png -e png".format(image_file)], shell=True, check=True)
-subprocess.run(["cwebp -q 60 {}.png -o {}.webp".format(image_file,image_file)], shell=True, check=True)
+subprocess.run(["cwebp -q 50 {}.png -o {}.webp".format(image_file,image_file)], shell=True, check=True)
 image = None
 with open("{}.webp".format(image_file), "rb") as in_file:
     image = in_file.read()
+os.unlink("{}.png".format(image_file))
 #sys.exit(11)
 
 while True:
@@ -60,9 +61,12 @@ modem.write_ok('AT+HTTPINIT')
 modem.write_ok('AT+HTTPPARA="CID",1')
 modem.write_ok('AT+HTTPPARA="URL","http://hacks.v9n.us/sim800c/?image=1"')
 data_length = len(image)
+# max data length from manual is 319488 bytes
 modem.write_expect("AT+HTTPDATA={},120000".format(data_length), "DOWNLOAD")
 modem.port.write(image)
 modem.read_ok()
 modem.write_ok('AT+HTTPACTION=1')
-#time.sleep(1)
+print("Waiting for confirmation of receipt...")
+modem.read_expect("HTTPACTION")
+time.sleep(2)
 modem.cleanup()
