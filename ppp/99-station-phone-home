@@ -1,0 +1,18 @@
+#!/bin/sh
+
+echo "Custom 99 ppp up script"
+
+key=/home/trick/station/ssh/id_rsa_station_phonehome
+
+echo "Connecting to hg..."
+hg=$(dig +short a hg.v9n.us | tail -n 1)
+ip route add $hg via $PPP_REMOTE
+/home/trick/station/notify-hass-online
+timeout 1810 ssh -o StrictHostKeyChecking=no -R 2022:localhost:22 -i $key station@hg.v9n.us sleep 1800
+
+echo "Oh boy, falling back to home..."
+home=$(dig +short a home.v9n.us | tail -n 1)
+ip route add $home via $PPP_REMOTE
+timeout 1810 ssh -o StrictHostKeyChecking=no -R 2022:localhost:22 -i $key station@home.v9n.us sleep 1800
+
+
