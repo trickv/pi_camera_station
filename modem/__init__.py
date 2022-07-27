@@ -40,7 +40,7 @@ class modem:
         print(received)
 
     def read_ok(self):
-        self.read_expect("OK")
+        return self.read_expect("OK")
 
     def read_expect(self, expect_message):
         received = b''
@@ -53,13 +53,13 @@ class modem:
 
                 if received.decode('latin1').find(expect_message) >= 0:
                     print(received)
-                    break
+                    return received.decode('latin1')
             print(".", end="", flush=True)
             time.sleep(0.1)
 
     def write_ok(self, command):
         self.write_noblock(command)
-        self.read_ok()
+        return self.read_ok()
 
     def write_expect(self, command, expect):
         self.write_noblock(command)
@@ -78,3 +78,8 @@ class modem:
         self.write('AT+SAPBR=0,1') # Close GPRS context
         self.write("AT+CIPSHUT") # Close PDP thing
         self.write("AT+HTTPTERM")
+
+    def get_gsm_time(self):
+        output = self.write_ok("AT+CIPGSMLOC=2,1")
+        print(output)
+
