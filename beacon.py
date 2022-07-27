@@ -3,6 +3,7 @@
 import RPi.GPIO as GPIO     
 import sys
 import time
+import subprocess
 import modem as modem_module
 
 modem = modem_module.modem()
@@ -47,6 +48,13 @@ modem.write_ok('AT+SAPBR=3,1,"Contype","GPRS"')
 modem.write_ok('AT+SAPBR=3,1,"APN","hologram"')
 modem.write_ok('AT+SAPBR=1,1') # open GPRS context
 modem.write_ok('AT+SAPBR=2,1') # Query GPRS context
+modem.get_gsm_time()
+# to then do something with the time:
+# first disable ntp: sudo timedatectl set-ntp false
+# perhaps only do any of this when sudo timedatectl | grep "System clock synchronized" is "no"
+# sudo date -s '2022/07/21 03:51:34' # just sub out the comma!
+# Or maybe try using sudo timedatectl set-time xxx; maybe this'll work when in offline mode
+
 
 
 # Now run the HTTP command:
@@ -54,6 +62,11 @@ modem.write_ok('AT+HTTPINIT')
 modem.write_ok('AT+HTTPPARA="CID",1')
 modem.write_ok('AT+HTTPPARA="URL","http://hacks.v9n.us/sim800c/"')
 modem.write_ok('AT+HTTPACTION=0')
-modem.write_ok('AT+HTTPREAD')
-
+time.sleep(2)
+response = modem.write_ok('AT+HTTPREAD')
 modem.cleanup()
+
+if (response.find("ET_PHONE_HOME") > 0):
+    print("ET PHONE HOME RECEIVED!")
+    time.sleep(1) # probably should be longer in prod?
+    subprocess.run(["sudo pppd call gprs"], shell=True)
