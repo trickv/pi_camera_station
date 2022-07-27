@@ -3,6 +3,7 @@
 import RPi.GPIO as GPIO     
 import subprocess
 import sys
+import os
 import time
 import datetime
 import modem as modem_module
