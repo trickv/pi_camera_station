@@ -8,7 +8,6 @@ import datetime
 
 start_time = datetime.datetime.now()
 
-
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT) # modem power signal pin
 GPIO.setup(26, GPIO.IN) # lipo shim low battery signal
