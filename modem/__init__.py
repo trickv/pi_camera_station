@@ -94,3 +94,22 @@ class modem:
         self.write_ok('AT+SAPBR=3,1,"APN","hologram"')
         self.write_ok('AT+SAPBR=1,1') # open GPRS context
         self.write_ok('AT+SAPBR=2,1') # Query GPRS context
+
+    def send_beacon(self):
+        self.write_ok('AT+HTTPINIT')
+        self.write_ok('AT+HTTPPARA="CID",1')
+        self.write_ok('AT+HTTPPARA="URL","http://hacks.v9n.us/sim800c/"')
+        self.write_ok('AT+HTTPACTION=0')
+        time.sleep(2)
+        response = self.write_ok('AT+HTTPREAD')
+        return(response)
+
+    def print_status(self):
+        print("Network signal quality query, returns a signal value:")
+        self.write_ok('AT+CSQ')
+        #print("Firmware version:")
+        #write_ok('AT+CGMR')
+        print("Network registration status:")
+        self.write_ok("AT+CREG?")
+        print("GPRS attachment status:")
+        self.write_ok("AT+CGATT?")

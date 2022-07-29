@@ -29,32 +29,10 @@ while True:
 #    print(rcv)
 
 # check status
-print("Network signal quality query, returns a signal value:")
-modem.write_ok('AT+CSQ')
-#print("Firmware version:")
-#write_ok('AT+CGMR')
-print("Network registration status:")
-modem.write_ok("AT+CREG?")
-print("GPRS attachment status:")
-modem.write_ok("AT+CGATT?")
 
-
-
-# Connect to GPRS:
-modem.write_ok('AT+CSTT="hologram"')
-modem.write_ok('AT+CIICR')
-modem.write_ok('AT+SAPBR=3,1,"Contype","GPRS"')
-modem.write_ok('AT+SAPBR=3,1,"APN","hologram"')
-modem.write_ok('AT+SAPBR=1,1') # open GPRS context
-modem.write_ok('AT+SAPBR=2,1') # Query GPRS context
-
-# Now run the HTTP command:
-modem.write_ok('AT+HTTPINIT')
-modem.write_ok('AT+HTTPPARA="CID",1')
-modem.write_ok('AT+HTTPPARA="URL","http://hacks.v9n.us/sim800c/"')
-modem.write_ok('AT+HTTPACTION=0')
-time.sleep(2)
-response = modem.write_ok('AT+HTTPREAD')
+modem.print_status()
+modem.connect_gprs()
+response = modem.send_beacon()
 modem.cleanup()
 
 if (response.find("ET_PHONE_HOME") > 0):
