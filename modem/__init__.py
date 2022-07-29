@@ -82,4 +82,15 @@ class modem:
     def get_gsm_time(self):
         output = self.write_ok("AT+CIPGSMLOC=2,1")
         print(output)
+        return(output)
+        # b'AT+CIPGSMLOC=2,1\r\r\n+CIPGSMLOC: 0,2022/07/28,15:59:20\r\n\r\nOK\r\n'
+        # AT+CIPGSMLOC=2,1
+        # +CIPGSMLOC: 0,2022/07/28,15:59:20
 
+    def connect_gprs(self):
+        self.write_ok('AT+CSTT="hologram"')
+        self.write_ok('AT+CIICR')
+        self.write_ok('AT+SAPBR=3,1,"Contype","GPRS"')
+        self.write_ok('AT+SAPBR=3,1,"APN","hologram"')
+        self.write_ok('AT+SAPBR=1,1') # open GPRS context
+        self.write_ok('AT+SAPBR=2,1') # Query GPRS context
