@@ -23,7 +23,8 @@
 # m h  dom mon dow   command
 #*/10 * * * * /home/trick/station/hourly-ping.py 2>&1
 42 * * * * /home/trick/station/beacon.py 2>&1
-@reboot /home/trick/station/startup-modem-manager.py 2>&1
+@reboot /home/trick/station/startup-modem-manager.py | tee -a /dev/shm/startup-modem-manager.log 2>&1
+@reboot /home/trick/station/wifi-handler-service.py 2>&1 | logger -t station-wifi-handler-service
 #*/2 * * * * /home/trick/station/hourly-ping.py 2>&1
 15 * * * * /home/trick/station/post-image.py 2>&1
 #* * * * * date
