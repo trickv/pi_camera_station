@@ -58,13 +58,5 @@ for_timedatectl_time = (" ".join(output.split("\r\n")[1].split(",")[1:3])).repla
 print("Setting system clock via timedatectl to {}".format(for_timedatectl_time))
 run("sudo timedatectl set-time \"{}\"".format(for_timedatectl_time))
 modem.cleanup()
-sys.exit(1) # HACK
-# to then do something with the time:
-# first disable ntp: sudo timedatectl set-ntp false
-# perhaps only do any of this when sudo timedatectl | grep "System clock synchronized" is "no"
-# sudo date -s '2022/07/21 03:51:34' # just sub out the comma!
-# Or maybe try using sudo timedatectl set-time xxx; maybe this'll work when in offline mode
-
-run("/home/trick/station/beacon.py")
 time.sleep(30)
 run("/home/trick/station/post-image.py")
