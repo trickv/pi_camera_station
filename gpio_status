@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+echo "LiPo Shim low battery signal; 1 is good; 0 is low"
+raspi-gpio get 26
+echo
+echo "Modem power relay. INPUT=off, OUTPUT=on. Level doesn't matter."
+raspi-gpio get 16
+echo
+echo "Modem power signal pin"
+raspi-gpio get 4
