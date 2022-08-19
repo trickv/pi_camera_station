@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env -S python -u
 
 import RPi.GPIO as GPIO
 import datetime
@@ -14,6 +14,10 @@ wifi_up = None
 def rfkill(mode):
     print("rfkill state change: {}".format(mode))
     subprocess.run("sudo rfkill {} all".format(mode), shell=True)
+#    if mode == "block":
+#        subprocess.run("echo 'usb1' | sudo tee /sys/bus/usb/drivers/usb/unbind") # power off usb
+#    else:
+#        subprocess.run("echo 'usb1' | sudo tee /sys/bus/usb/drivers/usb/bind") # power on usb
 
 def my_callback(channel):
     global wifi_up
@@ -42,7 +46,10 @@ try:
 
 
     GPIO.add_event_detect(pin, GPIO.BOTH, callback=my_callback)
-    message = input("Press any key to exit.")
+    #message = input("Press any key to exit.")
+    while True:
+        print("Listening for GPIO events...")
+        time.sleep(60)
 
 finally:
     GPIO.cleanup()
