@@ -11,3 +11,4 @@ fn=$(date +%s).jpeg
 file=/dev/shm/$fn
 raspistill -t 2000 -o $file
 scp -q -i /home/trick/station/ssh/id_rsa_station_phonehome $file station@hg.v9n.us:$fn
+curl -s https://vanstaveren.us/\~trick/ssh_remotecam/ping.cgi | grep -v OK
