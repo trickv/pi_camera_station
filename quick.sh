@@ -2,7 +2,7 @@
 
 raspi-gpio get 26 | grep "level=0" &> /dev/null
 if [ $? -eq 0 ]; then
-	# Battery is low, so don't take a picture
+	echo "Battery is low, so don't take a picture"
 	exit 42
 fi
 
