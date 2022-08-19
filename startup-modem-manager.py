@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env -S python -u
 
 import RPi.GPIO as GPIO     
 import sys
@@ -20,16 +20,17 @@ time.sleep(15) # sleep a bit every startup
 print("Sleep done; now waiting for the lipo shim to report that we have enough battery")
 
 iterations = 0
+max_iterations = 90
 
 while True:
     iterations += 1
-    if iterations > 30:
-        print("300s elapsed, close enough, let's rock!")
+    if iterations > max_iterations:
+        print("900s elapsed, close enough, let's rock!")
         break
     if GPIO.input(26) != GPIO.LOW:
         print("flux capacitor enabled")
         break
-    print("waiting for full power...")
+    print("waiting for full power... {}/{}".format(iterations, max_iterations))
     time.sleep(10)
 
 # turn on modem power relay
