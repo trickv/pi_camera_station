@@ -44,6 +44,8 @@ class modem:
 
     def read_expect(self, expect_message):
         received = b''
+        timeout_cycles = 300
+        counter = 0
         while True:
             received += self.port.read(1000)
             if len(received) > 0:
@@ -55,6 +57,9 @@ class modem:
                     print(received)
                     return received.decode('latin1')
             print(".", end="", flush=True)
+            counter += 1
+            if counter > timeout_cycles:
+                raise Exception("modem: read timeout waiting for expected message")
             time.sleep(0.1)
 
     def write_ok(self, command):
