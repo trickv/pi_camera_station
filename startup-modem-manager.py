@@ -13,11 +13,19 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT) # modem power signal pin
 GPIO.setup(26, GPIO.IN) # lipo shim low battery signal
 
-print("GPIO pins initialized; sleeping a bit before doing anything to give the battery a bit to charge")
+def get_uptime():
+    with open('/proc/uptime', 'r') as f:
+        uptime_seconds = float(f.readline().split()[0])
 
-time.sleep(15) # sleep a bit every startup
+    return uptime_seconds
 
-print("Sleep done; now waiting for the lipo shim to report that we have enough battery")
+print("GPIO pins initialized")
+
+print("Uptime: %d" % get_uptime())
+if get_uptime() < 60:
+    print("sleeping a bit before doing anything to give the battery a bit to charge")
+    time.sleep(15) # sleep a bit every startup
+    print("Sleep done; now waiting for the lipo shim to report that we have enough battery")
 
 iterations = 0
 max_iterations = 90
