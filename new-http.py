@@ -37,6 +37,7 @@ modem.write("AT+CNACT=0,0") # disconnect
 modem.write_ok("AT+CNACT=0,1") # connect
 modem.write_ok("AT+CNACT?")
 modem.write_ok("AT+CPSI?")
+modem.write("AT+SHDISC") # Disconnect HTT
 
 url = "http://www.yahoo.com"
 url = "http://hacks.v9n.us"
@@ -48,12 +49,12 @@ modem.write_ok("AT+SHCONN") # HTTP build
 modem.write_ok("AT+SHSTATE?") # Get HTTP status
 modem.write_ok("AT+SHCHEAD") # Clear HTTP header
 modem.write_ok("AT+SHAHEAD=\"Accept\",\"text/html, */*\"") # Add header content
-modem.write_ok("AT+SHAHEAD=\"User-Agent\",\"IOE Client\"") #  OK Add header content
+modem.write_ok("AT+SHAHEAD=\"User-Agent\",\"Chicken Wings\"") #  OK Add header content
 modem.write_ok("AT+SHAHEAD=\"Content-Type\",\"application/x-www-form-urlencoded\"") # Add header content
 modem.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
 modem.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
 modem.write_ok("AT+SHSTATE?") # Get HTTP status
-modem.write_ok("AT+SHREQ=\"{}\",1".format(url)) # Set request type is GET. 
+modem.write_ok("AT+SHREQ=\"{}/\",1".format(url)) # Set request type is GET. 
 # out:
 #Get data size is 8. 
 # i think this is where we get 8 for the next cmd?
