@@ -51,7 +51,7 @@ def run(command):
     #subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.run(command, shell=True)
 
-run("/home/trick/station/powerstatus.py")
+#run("/home/trick/station/powerstatus.py")
 run("/home/trick/station/powerstatus.py")
 
 modem = modem_module.modem()
