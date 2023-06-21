@@ -33,6 +33,7 @@ modem.write_ok("AT+CMNB=1") # hologram doc: prefer LTE over NB...
 modem.write_ok("AT+CPSI?")
 #modem.write_ok("AT+CIPSTATUS")
 modem.write_ok("AT+CGNAPN")
+modem.write("AT+CNACT=0,0") # disconnect
 modem.write_ok("AT+CNACT=0,1") # connect
 modem.write_ok("AT+CNACT?")
 modem.write_ok("AT+CPSI?")
@@ -49,10 +50,12 @@ modem.write_ok("AT+SHAHEAD=\"User-Agent\",\"IOE Client\"") #  OK Add header cont
 modem.write_ok("AT+SHAHEAD=\"Content-Type\",\"application/x-www-form-urlencoded\"") # Add header content
 modem.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
 modem.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
+modem.write_ok("AT+SHSTATE?") # Get HTTP status
 modem.write_ok("AT+SHREQ=\"http://www.yahoo.com/\",1") # Set request type is GET. 
 # out:
 #Get data size is 8. 
 # i think this is where we get 8 for the next cmd?
+modem.write_ok("AT+SHSTATE?") # Get HTTP status
 
 modem.write_ok("AT+SHREAD=0,8") # read
 modem.write_ok("AT+SHDISC") # Disconnect HTT
