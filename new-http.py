@@ -38,8 +38,10 @@ modem.write_ok("AT+CNACT=0,1") # connect
 modem.write_ok("AT+CNACT?")
 modem.write_ok("AT+CPSI?")
 
+url = "http://www.yahoo.com"
+url = "http://hacks.v9n.us"
 
-modem.write_ok("AT+SHCONF=\"URL\",\"http://www.yahoo.com\"") # Set up server URL
+modem.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(url)) # Set up server URL
 modem.write_ok("AT+SHCONF=\"BODYLEN\",1024") # Set HTTP body length
 modem.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
 modem.write_ok("AT+SHCONN") # HTTP build
@@ -51,7 +53,7 @@ modem.write_ok("AT+SHAHEAD=\"Content-Type\",\"application/x-www-form-urlencoded\
 modem.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
 modem.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
 modem.write_ok("AT+SHSTATE?") # Get HTTP status
-modem.write_ok("AT+SHREQ=\"http://www.yahoo.com/\",1") # Set request type is GET. 
+modem.write_ok("AT+SHREQ=\"{}\",1".format(url)) # Set request type is GET. 
 # out:
 #Get data size is 8. 
 # i think this is where we get 8 for the next cmd?
