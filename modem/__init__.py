@@ -44,14 +44,16 @@ class modem:
 
     def read_expect(self, expect_message):
         received = b''
-        timeout_cycles = 300
+        timeout_cycles = 30
         counter = 0
         while True:
             received += self.port.read(1000)
             if len(received) > 0:
                 if received.decode('latin1').find("ERROR") >= 0:
                     print(received)
-                    self.poweroff()
+                    #self.poweroff()
+                    print("Expected output not found, oops! Exiting.")
+                    sys.exit(1)
 
                 if received.decode('latin1').find(expect_message) >= 0:
                     print(received)
