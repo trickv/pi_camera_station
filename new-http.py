@@ -40,52 +40,22 @@ modem.write_ok("AT+CPSI?")
 
 modem.write_ok("AT+SHCONF=\"URL\",\"http://www.yahoo.com\"") # Set up server URL
 modem.write_ok("AT+SHCONF=\"BODYLEN\",1024") # Set HTTP body length
+modem.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
+modem.write_ok("AT+SHCONN") # HTTP build
+modem.write_ok("AT+SHSTATE?") # Get HTTP status
+modem.write_ok("AT+SHCHEAD") # Clear HTTP header
+modem.write_ok("AT+SHAHEAD=\"Accept\",\"text/html, */*\"") # Add header content
+modem.write_ok("AT+SHAHEAD=\"User-Agent\",\"IOE Client\"") #  OK Add header content
+modem.write_ok("AT+SHAHEAD=\"Content-Type\",\"application/x-www-form-urlencoded\"") # Add header content
+modem.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
+modem.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
+modem.write_ok("AT+SHREQ=\"http://www.yahoo.com/\",1") # Set request type is GET. 
+# out:
+#Get data size is 8. 
+# i think this is where we get 8 for the next cmd?
 
-modem.write_ok("AAT+SHCONF="HEADERLEN",350 OK Set HTTP head length
-
-modem.write_ok("AAT+SHCONN OK HTTP build
-
-modem.write_ok("AAT+SHSTATE? +SHSTATE: 1
-
-OK
-
-Get HTTP status
-
-modem.write_ok("AAT+SHCHEAD OK Clear HTTP header
-
-modem.write_ok("AAT+SHAHEAD="Accept","text/html, */*" OK Add header content
-
-modem.write_ok("AAT+SHAHEAD="User-Agent","IOE Client" OK Add header content
-
-modem.write_ok("AAT+SHAHEAD="Content-Type","application
-
-/x-www-form-urlencoded"
-
-OK Add header content
-
-modem.write_ok("AAT+SHAHEAD="Connection","keep-alive" OK Add header content
-
-modem.write_ok("AAT+SHAHEAD="Cache-control","no-cache" OK Add header content
-
-modem.write_ok("AAT+SHREQ="http://www.yahoo.com/",1 OK
-
-+SHREQ: "GET",301,8
-
-Set request type is GET. 
-
-Get data size is 8. 
-
-modem.write_ok("AAT+SHREAD=0,8 OK
-
-+SHREAD: 8
-
-redirect
-
-Read data length is 8 
-
-Data is “redirect” 
-
-modem.write_ok("AAT+SHDISC OK Disconnect HTT
+modem.write_ok("AT+SHREAD=0,8") # read
+modem.write_ok("AT+SHDISC") # Disconnect HTT
 
 
 modem.write_ok("AT+CNACT=0,0") # disconnect
