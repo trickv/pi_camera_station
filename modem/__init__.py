@@ -38,7 +38,7 @@ class modem:
             print(".", end="", flush=True)
             time.sleep(0.1)
         print(received)
-        return(received)
+        return(received.decode('latin1'))
 
     def read_ok(self):
         return self.read_expect("OK")
@@ -95,7 +95,7 @@ class modem:
         # AT+CIPGSMLOC=2,1
         # +CIPGSMLOC: 0,2022/07/28,15:59:20
 
-    def disconnect_lte(self):
+    def lte_disconnect(self):
         # Don't confirm anything in case it errors, which is probably fine
         self.write("AT+SHDISC") # Disconnect HTTP just in case it's still open
         self.write("AT+CNACT=0,0") # disconnect LTE
@@ -121,8 +121,9 @@ class modem:
 
     def lte_send_beacon(self):
         self.write("AT+SHDISC") # Disconnect HTT
-        url = "http://hacks.v9n.us"
-        self.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(url)) # Set up server URL
+        url = "http://hacks.v9n.us/sim800c/"
+        host = "http://hacks.v9n.us"
+        self.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(host)) # Set up server URL
         self.write_ok("AT+SHCONF=\"BODYLEN\",1024") # Set HTTP body length
         self.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
         self.write_ok("AT+SHCONN") # HTTP build
@@ -134,13 +135,13 @@ class modem:
         self.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
         self.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
         self.write_ok("AT+SHSTATE?") # Get HTTP status
-        self.write_ok("AT+SHREQ=\"{}/\",1".format(url)) # Set request type is GET. This is where the request is executed.
+        self.write_ok("AT+SHREQ=\"{}\",1".format(url)) # Set request type is GET. This is where the request is executed.
         # out:
         #Get data size is 8. 
         # i think this is where we get 8 for the next cmd?
-        self.write_ok("AT+SHSTATE?") # Get HTTP status
+        #self.write_ok("AT+SHSTATE?") # Get HTTP status
         time.sleep(2) # I think the request takes a bit to actually run; this is a race condition...
-        response = self.write("AT+SHREAD=0,30") # read
+        response = self.write("AT+SHREAD=0,15") # read
         # TO DO: check for missing OK
         self.write_ok("AT+SHDISC") # Disconnect HTT
         return(response)

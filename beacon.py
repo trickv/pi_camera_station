@@ -30,12 +30,14 @@ while True:
 
 # check status
 
+modem.lte_connect()
 modem.print_status()
-modem.connect_gprs()
-response = modem.send_beacon()
-modem.cleanup()
+response = modem.lte_send_beacon()
+modem.lte_disconnect()
 
 if (response.find("ET_PHONE_HOME") > 0):
     print("ET PHONE HOME RECEIVED!")
     time.sleep(1) # probably should be longer in prod?
     subprocess.run(["sudo pppd call gprs"], shell=True)
+else:
+    print("Beacon response: {}".format(response))

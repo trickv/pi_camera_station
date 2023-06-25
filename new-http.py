@@ -29,6 +29,6 @@ try:
 except:
     print("oops, cleaning up...")
     modem.write_ok("AT+SHDISC")
-    #modem.disconnect_lte()
+    #modem.lte_disconnect()
 
-#modem.disconnect_lte()
+#modem.lte_disconnect()
