@@ -38,6 +38,7 @@ class modem:
             print(".", end="", flush=True)
             time.sleep(0.1)
         print(received)
+        return(received)
 
     def read_ok(self):
         return self.read_expect("OK")
@@ -94,6 +95,11 @@ class modem:
         # AT+CIPGSMLOC=2,1
         # +CIPGSMLOC: 0,2022/07/28,15:59:20
 
+    def disconnect_lte(self):
+        # Don't confirm anything in case it errors, which is probably fine
+        self.write("AT+SHDISC") # Disconnect HTTP just in case it's still open
+        self.write("AT+CNACT=0,0") # disconnect LTE
+
     def connect_gprs(self):
         self.write_ok('AT+CSTT="hologram"')
         self.write_ok('AT+CIICR')
@@ -102,7 +108,44 @@ class modem:
         self.write_ok('AT+SAPBR=1,1') # open GPRS context
         self.write_ok('AT+SAPBR=2,1') # Query GPRS context
 
-    def send_beacon(self):
+    def lte_configure(self):
+        # This only needs to be run once per boot
+        self.write_ok("AT+CFUN=1")
+        self.write_ok("AT+CNMP=38") # set 38 mode lte, or 2 for NB iot
+        self.write_ok("AT+CMNB=1") # hologram doc: prefer LTE over NB...
+
+    def lte_connect(self):
+        #self.write_ok("AT+CGNAPN")
+        self.write("AT+CNACT=0,0") # disconnect
+        self.write_ok("AT+CNACT=0,1") # connect
+
+    def lte_send_beacon(self):
+        self.write("AT+SHDISC") # Disconnect HTT
+        url = "http://hacks.v9n.us"
+        self.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(url)) # Set up server URL
+        self.write_ok("AT+SHCONF=\"BODYLEN\",1024") # Set HTTP body length
+        self.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
+        self.write_ok("AT+SHCONN") # HTTP build
+        self.write_ok("AT+SHSTATE?") # Get HTTP status
+        self.write_ok("AT+SHCHEAD") # Clear HTTP header
+        self.write_ok("AT+SHAHEAD=\"Accept\",\"text/html, */*\"") # Add header content
+        self.write_ok("AT+SHAHEAD=\"User-Agent\",\"Chicken Wings\"") #  OK Add header content
+        self.write_ok("AT+SHAHEAD=\"Content-Type\",\"application/x-www-form-urlencoded\"") # Add header content
+        self.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
+        self.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
+        self.write_ok("AT+SHSTATE?") # Get HTTP status
+        self.write_ok("AT+SHREQ=\"{}/\",1".format(url)) # Set request type is GET. This is where the request is executed.
+        # out:
+        #Get data size is 8. 
+        # i think this is where we get 8 for the next cmd?
+        self.write_ok("AT+SHSTATE?") # Get HTTP status
+        time.sleep(2) # I think the request takes a bit to actually run; this is a race condition...
+        response = self.write("AT+SHREAD=0,30") # read
+        # TO DO: check for missing OK
+        self.write_ok("AT+SHDISC") # Disconnect HTT
+        return(response)
+
+    def gprs_send_beacon(self):
         self.write_ok('AT+HTTPINIT')
         self.write_ok('AT+HTTPPARA="CID",1')
         self.write_ok('AT+HTTPPARA="URL","http://hacks.v9n.us/sim800c/"')
@@ -117,6 +160,10 @@ class modem:
         #print("Firmware version:")
         #write_ok('AT+CGMR')
         print("Network registration status:")
-        self.write_ok("AT+CREG?")
-        print("GPRS attachment status:")
-        self.write_ok("AT+CGATT?")
+        self.write_ok("AT+CGREG?")
+        print("CPSI shows LTE connectivity status:")
+        self.write_ok("AT+CPSI?")
+        print("APN:")
+        self.write_ok("AT+COPS?")
+        print("IP address:")
+        self.write_ok("AT+CNACT?")
