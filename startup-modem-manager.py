@@ -63,6 +63,7 @@ modem.lte_configure()
 modem.lte_connect()
 modem.print_status()
 response = modem.lte_send_beacon()
+modem.lte_disconnect()
 """
 output = modem.get_gsm_time()
 print("time output:")
@@ -73,5 +74,5 @@ for_timedatectl_time = (" ".join(output.split("\r\n")[1].split(",")[1:3])).repla
 print("Setting system clock via timedatectl to {}".format(for_timedatectl_time))
 run("sudo timedatectl set-time \"{}\"".format(for_timedatectl_time))
 """
-time.sleep(30)
-run("/home/trick/station/post-image.py")
+#time.sleep(30)
+#run("/home/trick/station/post-image.py")
