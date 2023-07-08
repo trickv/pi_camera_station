@@ -1,0 +1,3 @@
+reinplement post function for lte modem
+fix beacon read to read variabe lebgth body (n=15 now)
+while loop to block aftet connect to wait for IP / PDP
