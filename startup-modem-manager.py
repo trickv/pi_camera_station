@@ -45,6 +45,8 @@ while True:
 GPIO.setup(16, GPIO.OUT) #  relay, this seems to activate it without even needing to pull up, weird
 time.sleep(10) # Give the modem 10 seconds to start up
 GPIO.output(4, GPIO.HIGH) # Tell the modem to turn on via it's power signal pin
+time.sleep(1)
+GPIO.output(4, GPIO.LOW) # NEW for LTE modem: need to leave this low else we power cycle!
 time.sleep(45) # time for the modem to get a signal ++
 
 def run(command):
@@ -57,10 +59,11 @@ run("/home/trick/station/powerstatus.py")
 modem = modem_module.modem()
 print("modem.init:")
 modem.init()
-print("modem.connect_gprs:")
-modem.connect_gprs()
-print("modem.send_beacon:")
-modem.send_beacon()
+modem.lte_configure()
+modem.lte_connect()
+modem.print_status()
+response = modem.lte_send_beacon()
+"""
 output = modem.get_gsm_time()
 print("time output:")
 print(output)
@@ -69,6 +72,6 @@ print(repr(output))
 for_timedatectl_time = (" ".join(output.split("\r\n")[1].split(",")[1:3])).replace("/","-")
 print("Setting system clock via timedatectl to {}".format(for_timedatectl_time))
 run("sudo timedatectl set-time \"{}\"".format(for_timedatectl_time))
-modem.cleanup()
+"""
 time.sleep(30)
 run("/home/trick/station/post-image.py")

@@ -20,7 +20,8 @@ import modem as modem_module
 modem = modem_module.modem()
 modem.init()
 
-#modem.lte_connect()
+modem.lte_configure()
+modem.lte_connect()
 modem.print_status()
 
 try:

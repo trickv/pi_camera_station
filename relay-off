@@ -1,0 +1,2 @@
+raspi-gpio set 16 dl
+raspi-gpio set 16 ip
