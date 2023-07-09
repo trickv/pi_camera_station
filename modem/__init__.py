@@ -146,7 +146,8 @@ class modem:
         self.write_ok("AT+SHDISC") # Disconnect HTT
         return(response)
     
-    def lte_http_post(self):
+    def lte_http_post(self, data):
+        length = len(data)
         self.write("AT+SHDISC") # Disconnect HTT
         url = "http://hacks.v9n.us/sim800c/"
         host = "http://hacks.v9n.us"
@@ -162,11 +163,12 @@ class modem:
         self.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
         self.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
         self.write_ok("AT+SHSTATE?") # Get HTTP status
-        self.write_ok("AT+SHBOD=7,10000") # set body content
+        self.write_ok("AT+SHBOD={},10000".format(length)) # set body content length and input timeout of 10000ms
 # example goes on to set parameterized body content...how to do it raw? else use AT+SHPARA
         self.write_ok("AT+SHREQ=\"{}\",2".format(url)) # 2 for post, 3 for put
 # TODO i think at this point i write the image..
-        self.port.write(image)
+        self.port.write(data)
+# TODO write a few zeroes to make sure this is long enough? hmm.
         # out:
         #Get data size is 8. 
         # i think this is where we get 8 for the next cmd?
