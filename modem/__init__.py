@@ -145,6 +145,35 @@ class modem:
         # TO DO: check for missing OK
         self.write_ok("AT+SHDISC") # Disconnect HTT
         return(response)
+    
+    def lte_http_post(self):
+        self.write("AT+SHDISC") # Disconnect HTT
+        url = "http://hacks.v9n.us/sim800c/"
+        host = "http://hacks.v9n.us"
+        self.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(host)) # Set up server URL
+        self.write_ok("AT+SHCONF=\"BODYLEN\",1024") # Set HTTP body length
+        self.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
+        self.write_ok("AT+SHCONN") # HTTP build
+        self.write_ok("AT+SHSTATE?") # Get HTTP status
+        self.write_ok("AT+SHCHEAD") # Clear HTTP header
+        self.write_ok("AT+SHAHEAD=\"Accept\",\"text/html, */*\"") # Add header content
+        self.write_ok("AT+SHAHEAD=\"User-Agent\",\"Chicken Wings\"") #  OK Add header content
+        self.write_ok("AT+SHAHEAD=\"Content-Type\",\"application/x-www-form-urlencoded\"") # Add header content
+        self.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
+        self.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
+        self.write_ok("AT+SHSTATE?") # Get HTTP status
+        self.write_ok("AT+SHBOD=7,10000") # set body content
+# example goes on to set parameterized body content...how to do it raw? else use AT+SHPARA
+        self.write_ok("AT+SHREQ=\"{}\",2".format(url)) # 2 for post, 3 for put
+        # out:
+        #Get data size is 8. 
+        # i think this is where we get 8 for the next cmd?
+        #self.write_ok("AT+SHSTATE?") # Get HTTP status
+        time.sleep(2) # I think the request takes a bit to actually run; this is a race condition...
+        response = self.write("AT+SHREAD=0,15") # read 15 chars back. FIXME variable len!
+        # TO DO: check for missing OK
+        self.write_ok("AT+SHDISC") # Disconnect HTT
+        return(response)
 
     def gprs_send_beacon(self):
         self.write_ok('AT+HTTPINIT')
