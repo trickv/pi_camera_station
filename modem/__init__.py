@@ -165,6 +165,8 @@ class modem:
         self.write_ok("AT+SHBOD=7,10000") # set body content
 # example goes on to set parameterized body content...how to do it raw? else use AT+SHPARA
         self.write_ok("AT+SHREQ=\"{}\",2".format(url)) # 2 for post, 3 for put
+# TODO i think at this point i write the image..
+        self.port.write(image)
         # out:
         #Get data size is 8. 
         # i think this is where we get 8 for the next cmd?
