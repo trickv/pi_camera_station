@@ -135,13 +135,14 @@ class modem:
         self.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
         self.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
         self.write_ok("AT+SHSTATE?") # Get HTTP status
-        self.write_ok("AT+SHREQ=\"{}\",1".format(url)) # Set request type is GET. This is where the request is executed.
+        status_output = self.write_ok("AT+SHREQ=\"{}\",1".format(url)) # Set request type is GET. This is where the request is executed.
+        [status, length] = self.parse_http_status(status_output)
         # out:
         #Get data size is 8. 
         # i think this is where we get 8 for the next cmd?
         #self.write_ok("AT+SHSTATE?") # Get HTTP status
         time.sleep(2) # I think the request takes a bit to actually run; this is a race condition...
-        response = self.write("AT+SHREAD=0,15") # read
+        response = self.write("AT+SHREAD=0,{}".format(length)) # read
         # TO DO: check for missing OK
         self.write_ok("AT+SHDISC") # Disconnect HTT
         return(response)
@@ -200,3 +201,10 @@ class modem:
         self.write_ok("AT+COPS?")
         print("IP address:")
         self.write_ok("AT+CNACT?")
+
+    def parse_http_status(self, status):
+        # x = b'\r\nOK\r\n+SHREQ: "GET",200,472\r\n'
+        ret = status.split("\r\n")[2].split(": ")[1].split(',')
+        print("status {}, len: {}".format(ret[1], ret[2]))
+
+        return [ret[1], ret[2]]
