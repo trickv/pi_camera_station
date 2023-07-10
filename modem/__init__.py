@@ -146,11 +146,9 @@ class modem:
         self.write_ok("AT+SHDISC") # Disconnect HTT
         return(response)
     
-    def lte_http_post(self, data):
+    def lte_http_post(self, host, url, data):
         length = len(data)
         self.write("AT+SHDISC") # Disconnect HTT
-        url = "http://hacks.v9n.us/sim800c/"
-        host = "http://hacks.v9n.us"
         self.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(host)) # Set up server URL
         self.write_ok("AT+SHCONF=\"BODYLEN\",1024") # Set HTTP body length
         self.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
@@ -173,6 +171,7 @@ class modem:
         #Get data size is 8. 
         # i think this is where we get 8 for the next cmd?
         #self.write_ok("AT+SHSTATE?") # Get HTTP status
+        self.read_ok()
         time.sleep(2) # I think the request takes a bit to actually run; this is a race condition...
         response = self.write("AT+SHREAD=0,15") # read 15 chars back. FIXME variable len!
         # TO DO: check for missing OK
