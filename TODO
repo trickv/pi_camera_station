@@ -1,2 +1,3 @@
 reinplement post function for lte modem
 while loop to block aftet connect to wait for IP / PDP
+clock sync?
