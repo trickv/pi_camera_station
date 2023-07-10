@@ -118,6 +118,19 @@ class modem:
         #self.write_ok("AT+CGNAPN")
         self.write("AT+CNACT=0,0") # disconnect
         self.write_ok("AT+CNACT=0,1") # connect
+        iter = 0
+        while True:
+            iter += 1
+            if iter > 60:
+                print("oops: never came online? :(")
+                return
+            out = self.write("AT+CPSI?")
+            if out.find("LTE") > 0:
+                print("looks online to me...")
+                return
+            else:
+                priny("not online...")
+                time.sleep(1)
 
     def lte_send_beacon(self):
         self.write("AT+SHDISC") # Disconnect HTT
