@@ -124,8 +124,9 @@ class modem:
             if iter > 60:
                 print("oops: never came online? :(")
                 return
-            out = self.write("AT+CPSI?")
-            if out.find("LTE") > 0:
+            self.write_noblock("AT+CPSI?")
+            out = self.read_expect("CPSI")
+            if out.find("LTE") >= 0:
                 print("looks online to me...")
                 return
             else:
@@ -217,6 +218,9 @@ class modem:
 
     def parse_http_status(self, status):
         # x = b'\r\nOK\r\n+SHREQ: "GET",200,472\r\n'
+        # real:
+        # b'AT+SHREQ="http://hacks.v9n.us/sim800c/",1\r\r\nOK\r\n'
+        # b'\r\n+SHREQ: "GET",200,15\r\nAT+SHREAD=0,15\r\r\nOK\r\n\r\n+SHREAD: 15\r\nOK no need...\n\n\r\n'
         ret = status.split("\r\n")[2].split(": ")[1].split(',')
         print("status {}, len: {}".format(ret[1], ret[2]))
 
