@@ -129,7 +129,7 @@ class modem:
                 print("looks online to me...")
                 return
             else:
-                priny("not online...")
+                print("not online...")
                 time.sleep(1)
 
     def lte_send_beacon(self):
