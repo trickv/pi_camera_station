@@ -63,6 +63,7 @@ modem.lte_configure()
 modem.lte_connect()
 modem.print_status()
 response = modem.lte_send_beacon()
+modem.write_ok("AT+CCLK?") # read modem time; should be format is "yy/MM/dd,hh:mm:ss±zz"
 modem.lte_disconnect()
 """
 output = modem.get_gsm_time()
