@@ -68,6 +68,10 @@ class modem:
     def write_ok(self, command):
         self.write_noblock(command)
         return self.read_ok()
+    
+    def write_ok_plus(self, command, next_expect):
+        self.write_noblock(command)
+        return self.read_ok() + self.read_expect(next_expect)
 
     def write_expect(self, command, expect):
         self.write_noblock(command)
@@ -149,13 +153,8 @@ class modem:
         self.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
         self.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
         self.write_ok("AT+SHSTATE?") # Get HTTP status
-        status_output = self.write_ok("AT+SHREQ=\"{}\",1".format(url)) # Set request type is GET. This is where the request is executed.
+        status_output = self.write_ok_plus("AT+SHREQ=\"{}\",1".format(url), "+SHREQ") # type 1 is GET. This is where the request is executed.
         [status, length] = self.parse_http_status(status_output)
-        # out:
-        #Get data size is 8. 
-        # i think this is where we get 8 for the next cmd?
-        #self.write_ok("AT+SHSTATE?") # Get HTTP status
-        time.sleep(2) # I think the request takes a bit to actually run; this is a race condition...
         response = self.write("AT+SHREAD=0,{}".format(length)) # read
         # TO DO: check for missing OK
         self.write_ok("AT+SHDISC") # Disconnect HTT
@@ -221,7 +220,8 @@ class modem:
         # real:
         # b'AT+SHREQ="http://hacks.v9n.us/sim800c/",1\r\r\nOK\r\n'
         # b'\r\n+SHREQ: "GET",200,15\r\nAT+SHREAD=0,15\r\r\nOK\r\n\r\n+SHREAD: 15\r\nOK no need...\n\n\r\n'
-        ret = status.split("\r\n")[2].split(": ")[1].split(',')
+        ret = status.split("\r\n")
+        ret = ret[3].split(": ")[1].split(',')
         print("status {}, len: {}".format(ret[1], ret[2]))
 
         return [ret[1], ret[2]]
