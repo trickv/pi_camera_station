@@ -41,13 +41,14 @@ while True:
     print("waiting for full power... {}/{}".format(iterations, max_iterations))
     time.sleep(10)
 
+print("turning modem on...")
 # turn on modem power relay
 GPIO.setup(16, GPIO.OUT) #  relay, this seems to activate it without even needing to pull up, weird
-time.sleep(10) # Give the modem 10 seconds to start up
+time.sleep(1) # Give the modem some seconds to start up
 GPIO.output(4, GPIO.HIGH) # Tell the modem to turn on via it's power signal pin
 time.sleep(1)
 GPIO.output(4, GPIO.LOW) # NEW for LTE modem: need to leave this low else we power cycle!
-time.sleep(45) # time for the modem to get a signal ++
+#time.sleep(45) # time for the modem to get a signal ++
 
 def run(command):
     #subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
