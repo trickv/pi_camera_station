@@ -43,26 +43,26 @@ class modem:
     def read_ok(self):
         return self.read_expect("OK")
 
-    def read_expect(self, expect_message):
+    def read_expect(self, expect_message, command="Unknown"):
         received = b''
-        timeout_cycles = 30
+        timeout_cycles = 90
         counter = 0
         while True:
             received += self.port.read_until(size=1000)
             if len(received) > 0:
                 if received.decode('latin1').find("ERROR") >= 0:
-                    print(received)
+                    print(received[:100])
                     #self.poweroff()
                     print("I found an ERROR, oops! Exiting.")
                     sys.exit(1)
 
                 if received.decode('latin1').find(expect_message) >= 0:
-                    print(received)
+                    print(received[:100])
                     return received.decode('latin1')
             print(".", end="", flush=True)
             counter += 1
             if counter > timeout_cycles:
-                raise Exception("modem: read timeout waiting for expected message")
+                raise Exception("modem: read timeout after command '{}' waiting for expected message '{}'".format(command, expect_message))
             time.sleep(0.1)
 
     def write_ok(self, command):
@@ -71,11 +71,11 @@ class modem:
     
     def write_ok_plus(self, command, next_expect):
         self.write_noblock(command)
-        return self.read_ok() + self.read_expect(next_expect)
+        return self.read_ok() + self.read_expect(next_expect, command)
 
     def write_expect(self, command, expect):
         self.write_noblock(command)
-        self.read_expect(expect)
+        self.read_expect(expect, command)
 
     def power_on(self, ):
         GPIO.setmode(GPIO.BCM)
@@ -125,11 +125,11 @@ class modem:
         iter = 0
         while True:
             iter += 1
-            if iter > 60:
+            if iter > 120:
                 print("oops: never came online? :(")
                 return
             self.write_noblock("AT+CPSI?")
-            out = self.read_expect("CPSI")
+            out = self.read_expect("CPSI", "lte_connect CPSI?")
             if out.find("LTE") >= 0:
                 print("looks online to me...")
                 return
@@ -159,12 +159,14 @@ class modem:
         # TO DO: check for missing OK
         self.write_ok("AT+SHDISC") # Disconnect HTT
         return(response)
-    
+   
     def lte_http_post(self, host, url, data):
+        if len(data) > 4096:
+            raise Exception("max of 4096 requested")
         length = len(data)
         self.write("AT+SHDISC") # Disconnect HTT
         self.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(host)) # Set up server URL
-        self.write_ok("AT+SHCONF=\"BODYLEN\",1024") # Set HTTP body length
+        self.write_ok("AT+SHCONF=\"BODYLEN\",{}".format(length)) # Set HTTP body length
         self.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
         self.write_ok("AT+SHCONN") # HTTP build
         self.write_ok("AT+SHSTATE?") # Get HTTP status
@@ -175,19 +177,20 @@ class modem:
         self.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
         self.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
         self.write_ok("AT+SHSTATE?") # Get HTTP status
-        self.write_ok("AT+SHBOD={},10000".format(length)) # set body content length and input timeout of 10000ms
-# example goes on to set parameterized body content...how to do it raw? else use AT+SHPARA
-        self.write_ok("AT+SHREQ=\"{}\",2".format(url)) # 2 for post, 3 for put
-# TODO i think at this point i write the image..
+        self.write_expect("AT+SHBOD={},10000".format(length), ">") # set body content length and input timeout of 10000ms
         self.port.write(data)
+        self.read_ok()
 # TODO write a few zeroes to make sure this is long enough? hmm.
+# example goes on to set parameterized body content...how to do it raw? else use AT+SHPARA
+        #self.write_ok("AT+SHREQ=\"{}\",2".format(url))
+        status_output = self.write_ok_plus("AT+SHREQ=\"{}\",3".format(url), "+SHREQ") # 2 for post, 3 for put
+        [status, length] = self.parse_http_status(status_output)
         # out:
         #Get data size is 8. 
         # i think this is where we get 8 for the next cmd?
         #self.write_ok("AT+SHSTATE?") # Get HTTP status
-        self.read_ok()
-        time.sleep(2) # I think the request takes a bit to actually run; this is a race condition...
-        response = self.write("AT+SHREAD=0,15") # read 15 chars back. FIXME variable len!
+        response = self.write("AT+SHREAD=0,{}".format(length)) # read
+        print("DBG: response: {}".format(response))
         # TO DO: check for missing OK
         self.write_ok("AT+SHDISC") # Disconnect HTT
         return(response)
