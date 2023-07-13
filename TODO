@@ -1,7 +1,10 @@
-clock sync?
+Before leaving island:
 GPS locator for if it floats away?
-status post which says: lipo level, uptime, signal quality, CPSI
-POST: first chunk should include md5sum + length; insert to DB
 immutable, impossible to break beacon code. separate code base or something? git pegged checkout?
 weekly pppd login in case all code goes to hell? requires clock sync or some kind of stateful on disk delay loop to make sure this doesn't run every bloody day and run up the bill for no use.
-wifi shutdown?
+wifi shutdown to save power
+
+Can do whenever or only if required:
+clock sync?
+status post which says: lipo level, uptime, signal quality, CPSI
+POST: first chunk should include md5sum + length; insert to DB
