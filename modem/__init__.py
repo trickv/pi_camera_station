@@ -204,8 +204,9 @@ class modem:
         # real:
         # b'AT+SHREQ="http://hacks.v9n.us/sim800c/",1\r\r\nOK\r\n'
         # b'\r\n+SHREQ: "GET",200,15\r\nAT+SHREAD=0,15\r\r\nOK\r\n\r\n+SHREAD: 15\r\nOK no need...\n\n\r\n'
-        ret = status.split("\r\n")
-        ret = ret[3].split(": ")[1].split(',')
-        print("status {}, len: {}".format(ret[1], ret[2]))
-
-        return [int(ret[1]), ret[2]]
+        for line in status.split("\r\n"):
+            if line.find("+SHREQ:") >= 0:
+                ret = line.split(": ")[1].split(',')
+                print("status {}, len: {}".format(ret[1], ret[2]))
+                return [int(ret[1]), ret[2]]
+        raise Exception("failed to parse HTTP status out of this: {}".format(status))
