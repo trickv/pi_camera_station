@@ -38,7 +38,7 @@ def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
    
-chunk_size = 1000
+chunk_size = 3500
 
 id = 0
 iter = 0
