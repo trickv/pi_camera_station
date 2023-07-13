@@ -33,6 +33,10 @@ modem.lte_connect()
 modem.print_status()
 modem.write("AT+SHDISC") # disconnect in case a previous connection attempt is still lingering
 
+# configure HTTP session parameters beforehand as these get reused
+modem.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(host)) # Set up server URL
+modem.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
+
 def chunks(lst, n):
     """ Yield successive n-sized chunks from lst.
         https://stackoverflow.com/a/312464 """
