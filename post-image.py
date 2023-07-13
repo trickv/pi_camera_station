@@ -28,28 +28,21 @@ with open("{}.webp".format(image_file), "rb") as in_file:
 url_template = "http://hacks.v9n.us/sim800c/?image={}&id={}"
 host = "http://hacks.v9n.us"
 
+modem.lte_configure()
+modem.lte_connect()
+modem.print_status()
+
 def chunks(lst, n):
     """ Yield successive n-sized chunks from lst.
         https://stackoverflow.com/a/312464 """
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
-
-iter = 0
-print("DBG: len webp={}".format(len(image)))
-for chunk in chunks(image, 3500):
-    print("DBG: {}, len={}".format(iter, len(chunk)))
-    print(chunk[:50])
-    print()
-    iter += 1
-
-#sys.exit(42)
+   
+chunk_size = 1000
 
 id = 0
 iter = 0
-for chunk in chunks(image, 1000):
-    modem.lte_configure()
-    modem.lte_connect()
-    modem.print_status()
+for chunk in chunks(image, chunk_size):
     print("*****†**********†chunk iter {} id {}".format(iter, id))
     url = url_template.format('new' if id == 0 else 'append', id)
     [status, length, response] = modem.lte_http_post(host, url, chunk)
@@ -60,4 +53,5 @@ for chunk in chunks(image, 1000):
     id = part2.split("=")[1].strip()
     iter += 1
     #time.sleep(30)
-    modem.lte_disconnect()
+
+modem.lte_disconnect()
