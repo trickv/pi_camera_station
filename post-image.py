@@ -31,6 +31,7 @@ host = "http://hacks.v9n.us"
 modem.lte_configure()
 modem.lte_connect()
 modem.print_status()
+modem.write("AT+SHDISC") # disconnect in case a previous connection attempt is still lingering
 
 def chunks(lst, n):
     """ Yield successive n-sized chunks from lst.
@@ -52,6 +53,5 @@ for chunk in chunks(image, chunk_size):
     part2 = part1[:part1.find("\r\n")]
     id = part2.split("=")[1].strip()
     iter += 1
-    #time.sleep(30)
 
 modem.lte_disconnect()

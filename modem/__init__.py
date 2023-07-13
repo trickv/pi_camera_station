@@ -164,35 +164,18 @@ class modem:
         if len(data) > 4096:
             raise Exception("max of 4096 requested")
         length = len(data)
-        self.write("AT+SHDISC") # Disconnect HTT
         self.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(host)) # Set up server URL
         self.write_ok("AT+SHCONF=\"BODYLEN\",{}".format(length)) # Set HTTP body length
         self.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
         self.write_ok("AT+SHCONN") # HTTP build
-        self.write_ok("AT+SHSTATE?") # Get HTTP status
-        self.write_ok("AT+SHCHEAD") # Clear HTTP header
-        self.write_ok("AT+SHAHEAD=\"Accept\",\"text/html, */*\"") # Add header content
-        self.write_ok("AT+SHAHEAD=\"User-Agent\",\"Chicken Wings\"") #  OK Add header content
-        self.write_ok("AT+SHAHEAD=\"Content-Type\",\"application/x-www-form-urlencoded\"") # Add header content
-        self.write_ok("AT+SHAHEAD=\"Connection\",\"keep-alive\"") # Add header content
-        self.write_ok("AT+SHAHEAD=\"Cache-control\",\"no-cache\"") # Add header content
-        self.write_ok("AT+SHSTATE?") # Get HTTP status
         self.write_expect("AT+SHBOD={},10000".format(length), ">") # set body content length and input timeout of 10000ms
         self.port.write(data)
         self.read_ok()
-# TODO write a few zeroes to make sure this is long enough? hmm.
-# example goes on to set parameterized body content...how to do it raw? else use AT+SHPARA
-        #self.write_ok("AT+SHREQ=\"{}\",2".format(url))
         status_output = self.write_ok_plus("AT+SHREQ=\"{}\",3".format(url), "+SHREQ") # 2 for post, 3 for put
         [status, length] = self.parse_http_status(status_output)
-        # out:
-        #Get data size is 8. 
-        # i think this is where we get 8 for the next cmd?
-        #self.write_ok("AT+SHSTATE?") # Get HTTP status
         response = self.write("AT+SHREAD=0,{}".format(length)) # read
         print("DBG: response: {}".format(response))
-        # TO DO: check for missing OK
-        self.write_ok("AT+SHDISC") # Disconnect HTT
+        self.write_ok("AT+SHDISC") # Disconnect HTTP
         return([status, length, response])
 
     def gprs_send_beacon(self):
