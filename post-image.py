@@ -52,7 +52,9 @@ for chunk in chunks(image, 1000):
     modem.print_status()
     print("*****†**********†chunk iter {} id {}".format(iter, id))
     url = url_template.format('new' if id == 0 else 'append', id)
-    response = modem.lte_http_post(host, url, chunk)
+    [status, length, response] = modem.lte_http_post(host, url, chunk)
+    if status != 200:
+        raise Exception("Status {} is not good, bailing out at response '{}', len={}".format(status, response, length))
     part1 = response[response.find('id='):]
     part2 = part1[:part1.find("\r\n")]
     id = part2.split("=")[1].strip()

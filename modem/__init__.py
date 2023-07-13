@@ -193,7 +193,7 @@ class modem:
         print("DBG: response: {}".format(response))
         # TO DO: check for missing OK
         self.write_ok("AT+SHDISC") # Disconnect HTT
-        return(response)
+        return([status, length, response])
 
     def gprs_send_beacon(self):
         self.write_ok('AT+HTTPINIT')
@@ -227,4 +227,4 @@ class modem:
         ret = ret[3].split(": ")[1].split(',')
         print("status {}, len: {}".format(ret[1], ret[2]))
 
-        return [ret[1], ret[2]]
+        return [int(ret[1]), ret[2]]
