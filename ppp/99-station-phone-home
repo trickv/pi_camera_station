@@ -2,6 +2,11 @@
 
 echo "Custom 99 ppp up script"
 
+if [ -e /dev/shm/now-image ]; do
+	echo "looks like this is an image run; sleeping a bit"
+	sleep 60
+done
+
 key=/home/trick/station/ssh/id_rsa_station_phonehome
 
 echo "Connecting to hg..."
