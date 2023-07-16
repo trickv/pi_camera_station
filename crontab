@@ -5,7 +5,7 @@
 #@reboot /home/trick/station/wifi-handler-service.py 2>&1 | tee -a /dev/shm/wifi-handler-service.log
 
 # why we're here:
-15 * * * * /home/trick/station/post-image.py 2>&1
+00 * * * * /home/trick/station/post-image.py 2>&1
 42 * * * * /home/trick/station/beacon.py 2>&1
 
 */60 * * * * $HOME/station/clean-mail > /dev/null 2>&1
