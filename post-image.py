@@ -25,7 +25,7 @@ with open("{}.webp".format(image_file), "rb") as in_file:
     image = in_file.read()
 #sys.exit(11)
 
-url_template = "http://hacks.v9n.us/sim800c/?image={}&id={}"
+url_template = "http://hacks.v9n.us/sim800c/?image={}&id={}&xmethod=chunky"
 host = "http://hacks.v9n.us"
 
 modem.lte_configure()

@@ -21,7 +21,7 @@ else:
     subprocess.run(["cwebp -q 50 {}.png -o {}.webp".format(image_file,image_file)], shell=True, check=True)
     os.unlink("{}.png".format(image_file))
 
-url = "http://hacks.v9n.us/sim800c/?image=new"
+url = "http://hacks.v9n.us/sim800c/?image=new&xmethod=ppp"
 touchfile = '/dev/shm/now-image'
 pathlib.Path(touchfile).touch()
 
