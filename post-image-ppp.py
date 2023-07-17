@@ -29,7 +29,7 @@ proc = subprocess.Popen("sudo pppd call image", shell=True)
 print("gprs called")
 time.sleep(10) # race...5s is enough
 print("now curl")
-cmd = "curl --data-binary @{}.webp {}".format(image_file, url)
+cmd = "curl --data-binary @{}.webp '{}'".format(image_file, url)
 print("cmd: {}".format(cmd))
 subprocess.run([cmd], shell=True)
 os.unlink(touchfile)
