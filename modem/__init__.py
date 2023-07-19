@@ -1,6 +1,7 @@
 import sys
 import time
 import serial
+import subprocess
 import RPi.GPIO as GPIO
 
 class modem:
@@ -39,6 +40,9 @@ class modem:
             time.sleep(0.1)
         print(received)
         return(received.decode('latin1'))
+
+    def read(self):
+        return(self.port.read(1000).decode('latin1'))
 
     def read_ok(self):
         return self.read_expect("OK")
@@ -210,3 +214,12 @@ class modem:
                 print("status {}, len: {}".format(ret[1], ret[2]))
                 return [int(ret[1]), ret[2]]
         raise Exception("failed to parse HTTP status out of this: {}".format(status))
+
+    def sync_clock(self):
+        self.write_ok("AT+CNTP=pool.ntp.org")
+        output = self.write_ok_plus("AT+CNTP", "+CNTP")
+        print("got:")
+        print(output)
+        for_timedatectl_time = output.split('"')[1].replace("+00","").replace("/","-").replace(","," ")
+        print("Setting system clock via timedatectl to {}".format(for_timedatectl_time))
+        subprocess.run("sudo timedatectl set-time \"{}\"".format(for_timedatectl_time), shell=True)
