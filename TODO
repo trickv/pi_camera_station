@@ -1,13 +1,14 @@
 Before leaving island:
+wifi shutdown to save power
 clock sync
-startup signal delay loop long
+startup signal delay loop longer
 GPS locator for if it floats away?
 immutable, impossible to break beacon code. separate code base or something? git pegged checkout?
 weekly pppd login in case all code goes to hell? requires clock sync or some kind of stateful on disk delay loop to make sure this doesn't run every bloody day and run up the bill for no use.
-wifi shutdown to save power
 beacon should git pull
 
 Can do whenever or only if required:
 import other ppp scripts
 status post which says: lipo level, uptime, signal quality, CPSI, git rev
 POST: first chunk should include md5sum + length; insert to DB
+beacon phone home modew: no/oneshot/persist + stateful oneshot
