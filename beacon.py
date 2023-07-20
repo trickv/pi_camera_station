@@ -26,6 +26,9 @@ modem.lte_disconnect()
 if (response.find("ET_PHONE_HOME") > 0):
     print("ET PHONE HOME RECEIVED!")
     time.sleep(1)
-    subprocess.run(["sudo pppd call gprs"], shell=True)
+    proc = subprocess.Popen("sudo pppd call gprs", shell=True)
+    time.sleep(60)
+    subprocess.run("./ci.sh", shell=True)
+    # proc.terminate()
 else:
     print("Beacon response: {}".format(response))
