@@ -28,7 +28,7 @@ if (response.find("ET_PHONE_HOME") > 0):
     time.sleep(1)
     proc = subprocess.Popen("sudo pppd call gprs", shell=True)
     time.sleep(60)
-    subprocess.run("./ci.sh", shell=True)
+    subprocess.run("~/station/ci.sh", shell=True)
     # proc.terminate()
 else:
     print("Beacon response: {}".format(response))
