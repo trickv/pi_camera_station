@@ -9,3 +9,5 @@ import other ppp scripts
 status post which says: lipo level, uptime, signal quality, CPSI, git rev
 POST: first chunk should include md5sum + length; insert to DB
 beacon phone home modew: no/oneshot/persist + stateful oneshot
+
+.
