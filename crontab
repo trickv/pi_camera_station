@@ -1,8 +1,8 @@
 # m h  dom mon dow   command
 @reboot /home/trick/station/startup-modem-manager.py 2>&1 | tee -a /dev/shm/startup-modem-manager.log
 
-# proved to be unreliable
-#@reboot /home/trick/station/wifi-handler-service.py 2>&1 | tee -a /dev/shm/wifi-handler-service.log
+# proved to be unreliable?
+@reboot /home/trick/station/wifi-handler-service.py 2>&1 | tee -a /dev/shm/wifi-handler-service.log
 
 # why we're here:
 #00 * * * * /home/trick/station/post-image.py 2>&1
