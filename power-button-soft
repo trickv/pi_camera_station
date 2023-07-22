@@ -1,5 +1,3 @@
 raspi-gpio set 4 dh
 sleep 0.5
 raspi-gpio set 4 dl
-sleep 0.5
-raspi-gpio set 4 dh
