@@ -216,8 +216,12 @@ class modem:
         raise Exception("failed to parse HTTP status out of this: {}".format(status))
 
     def sync_clock(self):
+        self.read() # flush the buffer
         self.write_ok("AT+CNTP=pool.ntp.org")
-        output = self.write_ok_plus("AT+CNTP", "+CNTP")
+        #output = self.write_ok_plus("AT+CNTP", "+CNTP")
+        self.write_noblock("AT+CNTP")
+        time.sleep(10)
+        output = self.read()
         print("got:")
         print(output)
         for_timedatectl_time = output.split('"')[1].replace("+00","").replace("/","-").replace(","," ")
