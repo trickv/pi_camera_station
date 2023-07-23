@@ -7,13 +7,19 @@ import subprocess
 import datetime
 import modem as modem_module
 
+cleanup = True
+if len(sys.argv) >= 2 and sys.argc == "test":
+    print("debug mode: not cleaning up! dont use in prod!")
+    cleanup = False
+    time.sleep(10)
+
 GPIO.setwarnings(False)
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT) # modem soft power signal pin
 
 
-
+# TODO make sure run inside tmux...look for TMUX env var
 
 # turn off, wait, turn on relay
 GPIO.setup(16, GPIO.IN) # relay
@@ -31,16 +37,23 @@ time.sleep(1)
 # turn on gps power
 modem = modem_module.modem()
 modem.init()
-modem.write_ok("AT+CGNSPWR")
+for i in range(0, 5):
+    print("AT:")
+    modem.write_noblock("AT")
+    print(modem.read())
+    time.sleep(1)
+modem.write_ok("AT")
+modem.write_ok("AT+CGNSPWR=1")
 
 # poll for signal, once found, poll for 5m
-for i in range(0, 120):
-    print(modem.write("AT+CGNSINF"))
+for i in range(0, 720):
+    print("time: {}".format(i*10))
+    modem.write("AT+CGNSINF")
     time.sleep(10)
 
 # write to disk
 # power cycle, run startup...py
-if sys.argc >= 2 and sys.argc == "test":
+if not cleanup:
     sys.exit(0)
 GPIO.setup(16, GPIO.IN) # relay
 time.sleep(1)
