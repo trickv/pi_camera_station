@@ -17,3 +17,6 @@
 
 # the ssh way, only for wifi
 #*/20 * * * * /home/trick/station/quick.sh
+
+# failsafe pppd login
+00 16 23,9 * * /home/trick/station/fallback.sh 2>&1
