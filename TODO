@@ -1,12 +1,10 @@
 Before leaving island:
 startup signal delay loop longer
-GPS locator for if it floats away?
 immutable, impossible to break beacon code. separate code base or something? git pegged checkout?
 system crontab'd pppd login. even if clock is broken eventually it'll hit?
 boot counter based pppd login - every 100 boots?
 
 Can do whenever or only if required:
-import other ppp scripts
 status post which says: lipo level, uptime, signal quality, CPSI, git rev
 POST: first chunk should include md5sum + length; insert to DB
 beacon phone home modew: no/oneshot/persist + stateful oneshot
