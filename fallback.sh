@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
+notify=/home/trick/station/notify-hass-online
+
 sudo pppd call gprs &
 sleep 60
-/home/trick/station/notify-hass-online
+$notify
 sleep 5m
-/home/trick/station/notify-hass-online
+$notify
 sleep 5m
-/home/trick/station/notify-hass-online
+$notify
 sleep 5m
-/home/trick/station/notify-hass-online
+$notify
 sleep 45m
 sudo killall pppd
