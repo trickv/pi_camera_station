@@ -10,7 +10,6 @@ import modem as modem_module
 GPIO.setwarnings(False)
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(4, GPIO.OUT) # modem power signal pin
 GPIO.setup(26, GPIO.IN) # lipo shim low battery signal
 
 def get_uptime():
@@ -45,9 +44,9 @@ print("turning modem on...")
 # turn on modem power relay
 GPIO.setup(16, GPIO.OUT) #  relay, this seems to activate it without even needing to pull up, weird
 time.sleep(1) # Give the modem some seconds to start up
-GPIO.output(4, GPIO.HIGH) # Tell the modem to turn on via it's power signal pin
-time.sleep(1)
-GPIO.output(4, GPIO.LOW) # NEW for LTE modem: need to leave this low else we power cycle!
+modem = modem_module.modem()
+modem.init()
+modem.poweron()
 #time.sleep(45) # time for the modem to get a signal ++
 
 def run(command):
@@ -57,13 +56,9 @@ def run(command):
 #run("/home/trick/station/powerstatus.py")
 run("/home/trick/station/powerstatus.py")
 
-modem = modem_module.modem()
-print("modem.init:")
-modem.init()
 modem.lte_configure()
 modem.lte_connect()
 modem.print_status()
-modem.lte_send_beacon()
 response = modem.lte_send_beacon()
 modem.lte_disconnect()
 
@@ -76,3 +71,5 @@ if (response.find("ET_PHONE_HOME") > 0):
     # proc.terminate()
 else:
     print("Beacon response: {}".format(response))
+    modem.poweroff()
+

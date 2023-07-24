@@ -8,14 +8,7 @@ import modem as modem_module
 modem = modem_module.modem()
 modem.init()
 
-while True:
-    modem.write_noblock('AT')
-    rcv = modem.port.read(100)
-    if len(rcv) > 0:
-        print(rcv)
-        break
-    print(".", end='', flush=True)
-    time.sleep(1)
+modem.poweron()
 
 modem.lte_configure()
 modem.lte_connect()
@@ -32,3 +25,5 @@ if (response.find("ET_PHONE_HOME") > 0):
     # proc.terminate()
 else:
     print("Beacon response: {}".format(response))
+    modem.poweroff()
+

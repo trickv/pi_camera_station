@@ -2,7 +2,10 @@ import sys
 import time
 import serial
 import subprocess
+import re
 import RPi.GPIO as GPIO
+
+GPIO.setwarnings(False)
 
 class modem:
 
@@ -10,17 +13,25 @@ class modem:
         self.port = serial.Serial("/dev/ttyS0", baudrate=115200, timeout=1)
 
     def poweroff(self):
-        self.write('AT+CIPSTATUS')
-        self.write('AT+HTTPTERM')
-        self.write('AT+SAPBR=0,1')
-        self.write('AT+CIPSHUT')
-        self.write('AT+CIPSTATUS')
-        sys.exit(2)
         self.write('AT+CPOWD=1')
-        time.sleep(5)
+        time.sleep(1)
         print(self.port.read(1000))
-        GPIO.output(4, GPIO.LOW) # Turn modem power switch off
-        sys.exit(1)
+    
+    def poweron(self):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(4, GPIO.OUT)
+        GPIO.output(4, GPIO.HIGH)
+        time.sleep(0.5)
+        GPIO.output(4, GPIO.LOW)
+        #time.sleep(1)
+        while True:
+            self.write_noblock('AT')
+            rcv = self.port.read(100)
+            if len(rcv) > 0:
+                print(rcv)
+                break
+            print(".", end='', flush=True)
+            time.sleep(1)
 
     def write_noblock(self, command):
         command = command + "\r\n"
@@ -81,13 +92,6 @@ class modem:
         self.write_noblock(command)
         self.read_expect(expect, command)
 
-    def power_on(self, ):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(4, GPIO.OUT)
-        GPIO.output(4, GPIO.HIGH)
-        time.sleep(0.5)
-        GPIO.output(4, GPIO.LOW)
-        time.sleep(1)
     
     def cleanup(self):
         self.write("AT+HTTPTERM")
@@ -123,20 +127,28 @@ class modem:
         self.write_ok("AT+CMNB=1") # hologram doc: prefer LTE over NB...
 
     def lte_connect(self):
-        #self.write_ok("AT+CGNAPN")
         self.write("AT+CNACT=0,0") # disconnect
         self.write_ok("AT+CNACT=0,1") # connect
         iter = 0
         while True:
             iter += 1
-            if iter > 120:
+            if iter > 300:
                 print("oops: never came online? :(")
                 return
             self.write_noblock("AT+CPSI?")
             out = self.read_expect("CPSI", "lte_connect CPSI?")
+            out += self.read()
             if out.find("LTE") >= 0:
-                print("looks online to me...")
-                return
+                print("looks online to me...let's see if we have an IP:")
+                # ok: AT+CNACT?\r\r\n+CNACT: 0,1,"100.70.169.229"\r\n+CNACT: 1,0,"0.0.0.0"\r\n+CNACT: 2,0,"0.0.0.0"\r\n+CNACT: 3,0,"0.0.0.0"\r\n\r\nOK\r\nAT+SHDISC\r\r\nERROR\r\n
+                # not good: ......b'AT+CNACT?\r\r\n+CNACT: 0,0,"0.0.0.0"\r\n+CNACT: 1,0,"0.0.0.0"\r\n+CNACT: 2,0,"0.0.0.0"\r\n+CNACT: 3,0,"0.0.0.'
+                ip_match = re.compile(".*\+CNACT: \d,1.*", flags=re.MULTILINE|re.DOTALL)
+                out = self.write_ok("AT+CNACT?")
+                if ip_match.match(out) is not None:
+                    print("ok now have an IP, really online now.")
+                    return
+                else:
+                    print("no ip yet!")
             else:
                 print("not online...")
                 time.sleep(1)
