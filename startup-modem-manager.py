@@ -64,7 +64,15 @@ modem.lte_configure()
 modem.lte_connect()
 modem.print_status()
 modem.lte_send_beacon()
-modem.sync_clock()
+response = modem.lte_send_beacon()
 modem.lte_disconnect()
-#time.sleep(30)
-#run("/home/trick/station/post-image.py")
+
+if (response.find("ET_PHONE_HOME") > 0):
+    print("ET PHONE HOME RECEIVED!")
+    time.sleep(1)
+    proc = subprocess.Popen("sudo pppd call gprs", shell=True)
+    time.sleep(60)
+    subprocess.run("~/station/ci.sh", shell=True)
+    # proc.terminate()
+else:
+    print("Beacon response: {}".format(response))
