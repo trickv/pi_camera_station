@@ -3,7 +3,7 @@
 set -u
 set -e
 
-maxmessages=20
+maxmessages=50
 
 foo=$(mail < /dev/null | head -n1 | awk '{print  $2}')
 echo "Ciunt: $foo"
