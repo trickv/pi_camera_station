@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-notify=/home/trick/station/notify-hass-online
+notify=/home/trick/station/notify-hass-online-fallback
 
 sudo pppd call gprs &
 sleep 60
