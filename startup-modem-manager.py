@@ -59,6 +59,7 @@ run("/home/trick/station/powerstatus.py")
 modem.lte_configure()
 modem.lte_connect()
 modem.print_status()
+modem.sync_clock()
 response = modem.lte_send_beacon()
 modem.lte_disconnect()
 
