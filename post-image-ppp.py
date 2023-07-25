@@ -13,6 +13,7 @@ modem = modem_module.modem()
 modem.init()
 
 modem.poweron()
+modem.lte_configure()
 
 if len(sys.argv) > 1 and sys.argv[1] == "old":
     print("Debug mode: reading /dev/shm/old image")
