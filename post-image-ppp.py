@@ -20,7 +20,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "old":
     image_file = "/dev/shm/old"
 else:
     image_file="/dev/shm/image-{}".format(datetime.datetime.isoformat(datetime.datetime.now()))
-    subprocess.run(["raspistill -t 2000 -o {}.png -e png".format(image_file)], shell=True, check=True)
+    subprocess.run(["raspistill -vf -hf -t 2000 -o {}.png -e png".format(image_file)], shell=True, check=True)
     subprocess.run(["cwebp -q 50 {}.png -o {}.webp".format(image_file,image_file)], shell=True, check=True)
     os.unlink("{}.png".format(image_file))
 
