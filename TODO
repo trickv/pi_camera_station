@@ -1,11 +1,10 @@
-Before leaving island:
-tie rope on, install
+To do:
+- HASS notification for first photo of the day
+- status post which says: lipo level, uptime, signal quality, CPSI, git rev
+- Log post back to server to catch errors like with startup-modem-manager?
+- Figure out a way to POST an image > 4k size through modem API instead of ppp+curl
+- Beacon phone home mode: no/oneshot/persist + stateful oneshot + interface from HASS
 
-Can do whenever or only if required:
-status post which says: lipo level, uptime, signal quality, CPSI, git rev
-POST: first chunk should include md5sum + length; insert to DB
-beacon phone home modew: no/oneshot/persist + stateful oneshot
-
-Good Ideas:
-boot counter based pppd login - every 100 boots?
-separate checkout of beacon code
+Good Ideas for safety:
+- boot counter based pppd login - every 100 boots?
+- separate checkout of beacon code
