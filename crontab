@@ -9,6 +9,9 @@
 25 * * * * /home/trick/station/post-image-ppp.py 2>&1
 42 * * * * /home/trick/station/beacon.py 2>&1
 
+# hacking zone
+50 19 * * * /home/trick/station/diag.py 2>&1
+
 */60 * * * * $HOME/station/clean-mail > /dev/null 2>&1
 
 # i think this was a power save hack?

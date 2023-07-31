@@ -176,9 +176,10 @@ class modem:
         self.write_ok("AT+SHDISC") # Disconnect HTT
         return(response)
    
-    def lte_http_post(self, host, url, data):
+    def lte_http_post(self, url, data):
         if len(data) > 4096:
             raise Exception("max of 4096 requested")
+        host = "/".join(url.split("/")[0:3])
         length = len(data)
         self.write_ok("AT+SHCONF=\"BODYLEN\",{}".format(length)) # Set HTTP body length
         self.write_ok("AT+SHCONN") # HTTP build
