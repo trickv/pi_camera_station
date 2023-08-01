@@ -26,7 +26,6 @@ with open("{}.webp".format(image_file), "rb") as in_file:
 #sys.exit(11)
 
 url_template = "http://hacks.v9n.us/sim800c/?image={}&id={}&xmethod=chunky"
-host = "http://hacks.v9n.us"
 
 modem.lte_configure()
 modem.lte_connect()
@@ -50,7 +49,7 @@ iter = 0
 for chunk in chunks(image, chunk_size):
     print("*****†**********†chunk iter {} id {}".format(iter, id))
     url = url_template.format('new' if id == 0 else 'append', id)
-    [status, length, response] = modem.lte_http_post(host, url, chunk)
+    [status, length, response] = modem.lte_http_post(url, chunk)
     if status != 200:
         raise Exception("Status {} is not good, bailing out at response '{}', len={}".format(status, response, length))
     part1 = response[response.find('id='):]
