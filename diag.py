@@ -14,7 +14,14 @@ signal = modem.write_ok('AT+CSQ')
 cpsi = modem.write_ok("AT+CPSI?")
 apn = modem.write_ok("AT+COPS?")
 #cops_query = modem.write_ok("AT+COPS=?")
-cops_query = "x"
+
+# COPS query can take a long time (90s or maybe 120-180 say some sites) so try this way:
+modem.write_noblock("AT+COPS=?")
+time.sleep(300)
+cops_query = modem.read()
+print(cops_query)
+
+#cops_query = "x"
 
 body = "cops_query={}&signal={}&cpsi={}&apn={}".format(urllib.parse.quote(cops_query), urllib.parse.quote(signal), urllib.parse.quote(cpsi), urllib.parse.quote(apn))
 
