@@ -181,7 +181,9 @@ class modem:
             raise Exception("max of 4096 requested")
         host = "/".join(url.split("/")[0:3])
         length = len(data)
+        self.write_ok("AT+SHCONF=\"URL\",\"{}\"".format(host)) # Set up server URL
         self.write_ok("AT+SHCONF=\"BODYLEN\",{}".format(length)) # Set HTTP body length
+        self.write_ok("AT+SHCONF=\"HEADERLEN\",350") # Set HTTP head length
         self.write_ok("AT+SHCONN") # HTTP build
         self.write_expect("AT+SHBOD={},10000".format(length), ">") # set body content length and input timeout of 10000ms
         self.port.write(data)
