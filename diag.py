@@ -30,7 +30,7 @@ url = "http://hacks.v9n.us/sim800c/diag/"
 modem.lte_configure()
 modem.lte_connect()
 modem.print_status()
-modem.lte_http_post(url, body)
+modem.lte_http_post(url, body.encode('latin1'))
 modem.lte_disconnect()
 modem.poweroff()
 
