@@ -35,7 +35,7 @@ while True:
         print("900s elapsed, close enough, let's rock!")
         break
     if GPIO.input(26) != GPIO.LOW:
-        print("flux capacitor enabled")
+        print("flux capacitor enabled (lipo shim says level is good)")
         break
     print("waiting for full power... {}/{}".format(iterations, max_iterations))
     time.sleep(10)
