@@ -47,7 +47,7 @@ time.sleep(1) # Give the modem some seconds to start up
 modem = modem_module.modem()
 modem.init()
 modem.poweron()
-#time.sleep(45) # time for the modem to get a signal ++
+time.sleep(45) # time for the modem to get a signal ++
 
 def run(command):
     #subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
